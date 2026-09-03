@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>心率儲備 (HRR) 計算器 - ACSM 標準</title>
+
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
   <style>
     :root {
       --primary: #ff4757;
@@ -72,7 +83,6 @@
       border-color: var(--primary);
     }
 
-    /* 滑軌上方的 ACSM 區間卡片樣式 */
     .acsm-summary {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -183,15 +193,14 @@
 
   <div class="input-group">
     <label for="age">年齡 (歲)</label>
-    <input type="number" id="age" value="30" min="1" max="120">
+    <input type="number" id="age" value="30" min="1" max="120" onfocus="this.select()">
   </div>
 
   <div class="input-group">
     <label for="restHr">靜息心率 (bpm)</label>
-    <input type="number" id="restHr" value="60" min="30" max="120">
+    <input type="number" id="restHr" value="60" min="30" max="120" onfocus="this.select()">
   </div>
 
-  <!-- ACSM 中強度與高強度即時心率範圍 -->
   <div class="acsm-summary">
     <div class="range-box moderate">
       <span class="range-title">中強度 (40-59%)</span>
@@ -274,7 +283,6 @@
     const hrr = maxHr - restHr;
     const targetHr = Math.round((hrr * (intensity / 100)) + restHr);
 
-    // 計算 ACSM 中強度 (40-59%) 與 高強度 (60-89%) 區間
     const modMin = Math.round((hrr * 0.40) + restHr);
     const modMax = Math.round((hrr * 0.59) + restHr);
     const vigMin = Math.round((hrr * 0.60) + restHr);
