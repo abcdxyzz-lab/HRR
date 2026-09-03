@@ -72,6 +72,44 @@
       border-color: var(--primary);
     }
 
+    /* 滑軌上方的 ACSM 區間卡片樣式 */
+    .acsm-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .range-box {
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .range-box.moderate {
+      border: 1px solid #2ed57350;
+      background-color: #2ed57310;
+    }
+
+    .range-box.vigorous {
+      border: 1px solid #ffa50250;
+      background-color: #ffa50210;
+    }
+
+    .range-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .range-num {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--text);
+    }
+
     .slider-header {
       display: flex;
       justify-content: space-between;
@@ -153,9 +191,21 @@
     <input type="number" id="restHr" value="60" min="30" max="120">
   </div>
 
+  <!-- ACSM 中強度與高強度即時心率範圍 -->
+  <div class="acsm-summary">
+    <div class="range-box moderate">
+      <span class="range-title">中強度 (40-59%)</span>
+      <span class="range-num" id="modRange">112 - 137 bpm</span>
+    </div>
+    <div class="range-box vigorous">
+      <span class="range-title">高強度 (60-89%)</span>
+      <span class="range-num" id="vigRange">138 - 176 bpm</span>
+    </div>
+  </div>
+
   <div class="input-group">
     <div class="slider-header">
-      <label for="intensity">運動強度 (%HRR)</label>
+      <label for="intensity">自訂目標強度 (%HRR)</label>
       <span class="slider-value" id="intensityVal">60%</span>
     </div>
     <input type="range" id="intensity" min="30" max="95" value="60" step="1">
@@ -201,6 +251,8 @@
   const maxHrEl = document.getElementById('maxHr');
   const hrrEl = document.getElementById('hrr');
   const targetHrEl = document.getElementById('targetHr');
+  const modRangeEl = document.getElementById('modRange');
+  const vigRangeEl = document.getElementById('vigRange');
 
   function calculate() {
     const age = parseInt(ageInput.value) || 0;
@@ -213,6 +265,8 @@
       maxHrEl.textContent = '-';
       hrrEl.textContent = '-';
       targetHrEl.textContent = '-';
+      modRangeEl.textContent = '-';
+      vigRangeEl.textContent = '-';
       return;
     }
 
@@ -220,9 +274,18 @@
     const hrr = maxHr - restHr;
     const targetHr = Math.round((hrr * (intensity / 100)) + restHr);
 
+    // 計算 ACSM 中強度 (40-59%) 與 高強度 (60-89%) 區間
+    const modMin = Math.round((hrr * 0.40) + restHr);
+    const modMax = Math.round((hrr * 0.59) + restHr);
+    const vigMin = Math.round((hrr * 0.60) + restHr);
+    const vigMax = Math.round((hrr * 0.89) + restHr);
+
     maxHrEl.textContent = maxHr + ' bpm';
     hrrEl.textContent = (hrr > 0 ? hrr : 0) + ' bpm';
     targetHrEl.textContent = (targetHr > 0 ? targetHr : 0) + ' bpm';
+
+    modRangeEl.textContent = `${modMin} - ${modMax} bpm`;
+    vigRangeEl.textContent = `${vigMin} - ${vigMax} bpm`;
 
     const zones = [
       { id: 'zone1', min: 30, max: 39 },
