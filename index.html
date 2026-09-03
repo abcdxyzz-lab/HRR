@@ -79,6 +79,175 @@
     }
 
     .slider-value {
-      font-weight:
+      font-weight: bold;
+      color: var(--primary);
+    }
 
-      
+    input[type="range"] {
+      width: 100%;
+      margin-top: 8px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .results {
+      background: var(--highlight);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 20px 0;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .result-target {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary);
+      border-top: 1px dashed #ff788850;
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    .zone-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .zone-table th, .zone-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid #f1f2f6;
+    }
+
+    .zone-table th {
+      background-color: #f8f9fa;
+      color: var(--text-muted);
+    }
+
+    .active-zone {
+      background-color: var(--highlight);
+      font-weight: bold;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator-card">
+  <h1>心率儲備 (HRR) 計算器</h1>
+
+  <div class="input-group">
+    <label for="age">年齡 (歲)</label>
+    <input type="number" id="age" value="30" min="1" max="120">
+  </div>
+
+  <div class="input-group">
+    <label for="restHr">靜息心率 (bpm)</label>
+    <input type="number" id="restHr" value="60" min="30" max="120">
+  </div>
+
+  <div class="input-group">
+    <div class="slider-header">
+      <label for="intensity">目標運動強度</label>
+      <span class="slider-value" id="intensityVal">70%</span>
+    </div>
+    <input type="range" id="intensity" min="50" max="95" value="70" step="5">
+  </div>
+
+  <div class="results">
+    <div class="result-item">
+      <span>預估最大心率</span>
+      <span id="maxHr">190 bpm</span>
+    </div>
+    <div class="result-item">
+      <span>心率儲備 (HRR)</span>
+      <span id="hrr">130 bpm</span>
+    </div>
+    <div class="result-item result-target">
+      <span>目標心率 (THR)</span>
+      <span id="targetHr">151 bpm</span>
+    </div>
+  </div>
+
+  <table class="zone-table">
+    <thead>
+      <tr>
+        <th>強度</th>
+        <th>訓練目標類型</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="zone1"><td>50% - 60%</td><td>輕度熱身 / 恢復區間</td></tr>
+      <tr id="zone2"><td>60% - 70%</td><td>低強度 / 燃脂區間</td></tr>
+      <tr id="zone3"><td>70% - 80%</td><td>中強度 / 有氧耐力區間</td></tr>
+      <tr id="zone4"><td>80% - 90%</td><td>高強度 / 無氧耐力區間</td></tr>
+      <tr id="zone5"><td>90% - 100%</td><td>極限強度 / 最大攝氧量區間</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const ageInput = document.getElementById('age');
+  const restHrInput = document.getElementById('restHr');
+  const intensityInput = document.getElementById('intensity');
+  const intensityVal = document.getElementById('intensityVal');
+
+  const maxHrEl = document.getElementById('maxHr');
+  const hrrEl = document.getElementById('hrr');
+  const targetHrEl = document.getElementById('targetHr');
+
+  function calculate() {
+    const age = parseInt(ageInput.value) || 0;
+    const restHr = parseInt(restHrInput.value) || 0;
+    const intensity = parseInt(intensityInput.value) || 0;
+
+    intensityVal.textContent = intensity + '%';
+
+    if (age <= 0 || restHr <= 0) {
+      maxHrEl.textContent = '-';
+      hrrEl.textContent = '-';
+      targetHrEl.textContent = '-';
+      return;
+    }
+
+    const maxHr = 220 - age;
+    const hrr = maxHr - restHr;
+    const targetHr = Math.round((hrr * (intensity / 100)) + restHr);
+
+    maxHrEl.textContent = maxHr + ' bpm';
+    hrrEl.textContent = (hrr > 0 ? hrr : 0) + ' bpm';
+    targetHrEl.textContent = (targetHr > 0 ? targetHr : 0) + ' bpm';
+
+    const zones = [
+      { id: 'zone1', min: 50, max: 60 },
+      { id: 'zone2', min: 60, max: 70 },
+      { id: 'zone3', min: 70, max: 80 },
+      { id: 'zone4', min: 80, max: 90 },
+      { id: 'zone5', min: 90, max: 100 }
+    ];
+
+    zones.forEach(zone => {
+      const el = document.getElementById(zone.id);
+      if (intensity >= zone.min && intensity < zone.max) {
+        el.classList.add('active-zone');
+      } else {
+        el.classList.remove('active-zone');
+      }
+    });
+  }
+
+  ageInput.addEventListener('input', calculate);
+  restHrInput.addEventListener('input', calculate);
+  intensityInput.addEventListener('input', calculate);
+
+  calculate();
+</script>
+</body>
+</html>
