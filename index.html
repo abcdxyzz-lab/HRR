@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>心率儲備 (HRR) 計算器</title>
+  <title>心率儲備 (HRR) 計算器 - ACSM 標準</title>
   <style>
     :root {
       --primary: #ff4757;
@@ -35,7 +35,7 @@
       background: var(--card-bg);
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      max-width: 440px;
+      max-width: 460px;
       width: 100%;
       padding: 28px;
     }
@@ -155,10 +155,10 @@
 
   <div class="input-group">
     <div class="slider-header">
-      <label for="intensity">目標運動強度</label>
-      <span class="slider-value" id="intensityVal">70%</span>
+      <label for="intensity">運動強度 (%HRR)</label>
+      <span class="slider-value" id="intensityVal">60%</span>
     </div>
-    <input type="range" id="intensity" min="50" max="95" value="70" step="5">
+    <input type="range" id="intensity" min="30" max="95" value="60" step="1">
   </div>
 
   <div class="results">
@@ -172,23 +172,22 @@
     </div>
     <div class="result-item result-target">
       <span>目標心率 (THR)</span>
-      <span id="targetHr">151 bpm</span>
+      <span id="targetHr">138 bpm</span>
     </div>
   </div>
 
   <table class="zone-table">
     <thead>
       <tr>
-        <th>強度</th>
-        <th>訓練目標類型</th>
+        <th>強度 (%HRR)</th>
+        <th>ACSM 分級說明</th>
       </tr>
     </thead>
     <tbody>
-      <tr id="zone1"><td>50% - 60%</td><td>輕度熱身 / 恢復區間</td></tr>
-      <tr id="zone2"><td>60% - 70%</td><td>低強度 / 燃脂區間</td></tr>
-      <tr id="zone3"><td>70% - 80%</td><td>中強度 / 有氧耐力區間</td></tr>
-      <tr id="zone4"><td>80% - 90%</td><td>高強度 / 無氧耐力區間</td></tr>
-      <tr id="zone5"><td>90% - 100%</td><td>極限強度 / 最大攝氧量區間</td></tr>
+      <tr id="zone1"><td>30% - 39%</td><td>低強度 (Light)</td></tr>
+      <tr id="zone2"><td>40% - 59%</td><td>中等強度 (Moderate)</td></tr>
+      <tr id="zone3"><td>60% - 89%</td><td>高強度 / 劇烈 (Vigorous)</td></tr>
+      <tr id="zone4"><td>≥ 90%</td><td>近乎最大強度 (Near-maximal)</td></tr>
     </tbody>
   </table>
 </div>
@@ -226,16 +225,15 @@
     targetHrEl.textContent = (targetHr > 0 ? targetHr : 0) + ' bpm';
 
     const zones = [
-      { id: 'zone1', min: 50, max: 60 },
-      { id: 'zone2', min: 60, max: 70 },
-      { id: 'zone3', min: 70, max: 80 },
-      { id: 'zone4', min: 80, max: 90 },
-      { id: 'zone5', min: 90, max: 100 }
+      { id: 'zone1', min: 30, max: 39 },
+      { id: 'zone2', min: 40, max: 59 },
+      { id: 'zone3', min: 60, max: 89 },
+      { id: 'zone4', min: 90, max: 100 }
     ];
 
     zones.forEach(zone => {
       const el = document.getElementById(zone.id);
-      if (intensity >= zone.min && intensity < zone.max) {
+      if (intensity >= zone.min && intensity <= zone.max) {
         el.classList.add('active-zone');
       } else {
         el.classList.remove('active-zone');
